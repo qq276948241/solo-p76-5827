@@ -24,26 +24,20 @@ namespace :reminders do
       confirmed_bookings.each do |booking|
         user = booking.user
 
-        existing_reminder = user.notifications.find_by(
-          notifiable_type: 'Course',
-          notifiable_id: course.id,
-          title: '课程即将开始'
-        )
-
-        if existing_reminder
+        if NotificationService.reminder_already_sent?(user, course)
           skipped_count += 1
           puts "  - 跳过 #{user.name}: 已发送过提醒"
           next
         end
 
-        user.notifications.create!(
-          title: '课程即将开始',
-          body: "温馨提醒：您预约的「#{course.name}」课程将于2小时后开始（#{course.start_time.strftime('%m月%d日 %H:%M')}），地点：#{course.location || '请查看课表'}。请准时参加~",
-          notifiable: course
-        )
-
-        notified_count += 1
-        puts "  - ✓ 已提醒 #{user.name}"
+        begin
+          NotificationService.create_reminder_notification(user, course)
+          notified_count += 1
+          puts "  - ✓ 已提醒 #{user.name}"
+        rescue StandardError => e
+          Rails.logger.error "Failed to send reminder to user #{user.id} for course #{course.id}: #{e.message}"
+          puts "  - ✗ 提醒失败 #{user.name}: #{e.message}"
+        end
       end
     end
 

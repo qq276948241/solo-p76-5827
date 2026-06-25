@@ -11,6 +11,10 @@ YogaStudio::Application.routes.draw do
 
       resources :bookings, only: [:index, :show]
 
+      resources :notifications, only: [:index] do
+        patch 'read', on: :member
+      end
+
       namespace :teacher do
         resources :courses, only: [:index, :show] do
           get 'today', on: :collection

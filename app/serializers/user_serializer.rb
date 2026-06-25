@@ -1,5 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :name, :phone, :email, :role, :bio, :created_at
+  attributes :id, :name, :phone, :email, :role, :bio, :created_at, :unread_count
 
   has_many :memberships, if: :include_memberships?
 

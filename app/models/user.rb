@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :bookings, dependent: :destroy
   has_many :waitlists, dependent: :destroy
   has_many :attendances, dependent: :destroy
+  has_many :notifications, dependent: :destroy
   has_many :teaching_courses, class_name: 'Course', foreign_key: 'teacher_id'
 
   validates :name, presence: true
@@ -41,5 +42,9 @@ class User < ApplicationRecord
     return false unless membership&.punch_card?
 
     membership.increment!(:remaining_classes)
+  end
+
+  def unread_count
+    notifications.unread.count
   end
 end

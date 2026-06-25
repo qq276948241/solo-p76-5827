@@ -62,6 +62,13 @@ class BookingService
 
     @user.deduct_class!
 
+    send_notification!(
+      user: @user,
+      title: '预约成功',
+      body: "您已成功预约「#{@course.name}」课程，上课时间：#{@course.start_time.strftime('%m月%d日 %H:%M')}。",
+      notifiable: booking
+    )
+
     booking
   end
 
@@ -76,6 +83,13 @@ class BookingService
       active: true
     )
 
+    send_notification!(
+      user: @user,
+      title: '已进入候补名单',
+      body: "「#{@course.name}」课程已满员，您已进入候补名单，当前排位第#{waitlist.position}位。如有空位将自动为您预约。",
+      notifiable: waitlist
+    )
+
     { booking: booking, waitlist: waitlist }
   end
 
@@ -87,6 +101,13 @@ class BookingService
     booking.update!(status: :cancelled, cancelled_at: Time.now)
     @user.refund_class!
 
+    send_notification!(
+      user: @user,
+      title: '预约已取消',
+      body: "您已成功取消「#{@course.name}」课程的预约，上课时间：#{@course.start_time.strftime('%m月%d日 %H:%M')}。课时已返还至您的卡内。",
+      notifiable: booking
+    )
+
     promote_from_waitlist!
   end
 
@@ -95,6 +116,13 @@ class BookingService
     waitlist&.update!(active: false)
 
     booking.update!(status: :cancelled, cancelled_at: Time.now, cancel_reason: 'Removed from waitlist')
+
+    send_notification!(
+      user: @user,
+      title: '候补已取消',
+      body: "您已成功取消「#{@course.name}」课程的候补申请。",
+      notifiable: booking
+    )
 
     reorder_waitlist!
   end
@@ -113,6 +141,13 @@ class BookingService
       first_waitlisted.update!(active: false)
       user.deduct_class!
       reorder_waitlist!
+
+      send_notification!(
+        user: user,
+        title: '候补成功转正',
+        body: "恭喜！「#{@course.name}」课程有了空位，您已从候补转为正式预约，上课时间：#{@course.start_time.strftime('%m月%d日 %H:%M')}。",
+        notifiable: booking
+      )
     end
   end
 
@@ -121,5 +156,13 @@ class BookingService
     active_waitlists.each_with_index do |wl, index|
       wl.update_column(:position, index + 1)
     end
+  end
+
+  def send_notification!(user:, title:, body:, notifiable: nil)
+    user.notifications.create!(
+      title: title,
+      body: body,
+      notifiable: notifiable
+    )
   end
 end

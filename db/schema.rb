@@ -1,4 +1,4 @@
-ActiveRecord::Schema[7.0].define(version: 2024_01_01_000006) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_01_000007) do
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
     t.string "phone", null: false
@@ -82,6 +82,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_01_000006) do
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.string "notifiable_type"
+    t.bigint "notifiable_id"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
+    t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   add_foreign_key "memberships", "users"
   add_foreign_key "courses", "users", column: "teacher_id"
   add_foreign_key "bookings", "courses"
@@ -91,4 +105,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_01_000006) do
   add_foreign_key "attendances", "bookings"
   add_foreign_key "attendances", "courses"
   add_foreign_key "attendances", "users"
+  add_foreign_key "notifications", "users"
 end

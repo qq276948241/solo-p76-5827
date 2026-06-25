@@ -18,26 +18,27 @@ namespace :reminders do
     courses.each do |course|
       puts "\n处理课程: #{course.name} (#{course.start_time.strftime('%Y-%m-%d %H:%M')})"
 
-      confirmed_bookings = course.confirmed_bookings.includes(:user)
-      puts "  已预约人数: #{confirmed_bookings.count}"
+      confirmed_bookings = course.confirmed_bookings.where(reminder_sent_at: nil).includes(:user)
+      puts "  未提醒人数: #{confirmed_bookings.count}"
 
       confirmed_bookings.each do |booking|
         user = booking.user
 
-        if NotificationService.reminder_already_sent?(user, course)
-          skipped_count += 1
-          puts "  - 跳过 #{user.name}: 已发送过提醒"
-          next
-        end
-
         begin
           NotificationService.create_reminder_notification(user, course)
+          booking.update!(reminder_sent_at: Time.now)
           notified_count += 1
           puts "  - ✓ 已提醒 #{user.name}"
         rescue StandardError => e
           Rails.logger.error "Failed to send reminder to user #{user.id} for course #{course.id}: #{e.message}"
           puts "  - ✗ 提醒失败 #{user.name}: #{e.message}"
         end
+      end
+
+      already_sent_count = course.confirmed_bookings.where.not(reminder_sent_at: nil).count
+      if already_sent_count > 0
+        puts "  已提醒过: #{already_sent_count} 人（跳过）"
+        skipped_count += already_sent_count
       end
     end
 

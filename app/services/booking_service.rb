@@ -57,7 +57,8 @@ class BookingService
   def create_booking!
     booking = @user.bookings.create!(
       course: @course,
-      status: :confirmed
+      status: :confirmed,
+      reminder_sent_at: nil
     )
 
     @user.deduct_class!
@@ -74,7 +75,8 @@ class BookingService
   def add_to_waitlist!
     booking = @user.bookings.create!(
       course: @course,
-      status: :waitlisted
+      status: :waitlisted,
+      reminder_sent_at: nil
     )
 
     waitlist = @course.waitlists.create!(

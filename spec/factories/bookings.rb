@@ -3,5 +3,6 @@ FactoryBot.define do
     user
     course
     status { :confirmed }
+    reminder_sent_at { nil }
   end
 end

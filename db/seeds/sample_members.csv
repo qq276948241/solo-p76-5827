@@ -1,0 +1,10 @@
+name,phone,email,password,role,bio,membership_type,total_classes,remaining_classes,start_date,end_date
+李晓明,13800000001,lixiaoming@example.com,yoga123456,member,,punch_card,20,20,2026-01-01,2026-12-31
+王小红,13800000002,wangxiaohong@example.com,yoga123456,member,,yearly,,,2026-01-01,2026-12-31
+张美丽,13800000003,zhangmeili@example.com,yoga123456,member,,punch_card,10,10,2026-06-01,2027-05-31
+刘健康,13800000004,liujiankang@example.com,yoga123456,member,,punch_card,30,30,2026-01-01,2026-12-31
+陈快乐,13800000005,chenkuaile@example.com,yoga123456,member,,yearly,,,2026-03-01,2027-02-28
+赵瑜伽,13900000001,zhaoyujia@example.com,yoga123456,teacher,资深瑜伽导师，10年教学经验，擅长哈他瑜伽和阴瑜伽,,,
+孙禅意,13900000002,sunchanyi@example.com,yoga123456,teacher,流瑜伽认证导师，8年教学经验，专注力量型瑜伽,,,
+周静心,13900000003,zhoujingxin@example.com,yoga123456,teacher,阿斯汤加认证老师，6年教学经验,,,
+吴冥想,13900000004,wumingxiang@example.com,yoga123456,teacher,冥想与呼吸法专家，12年经验,,,

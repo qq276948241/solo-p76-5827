@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: localhost
+  username: postgres
+  password: postgres
+
+development:
+  <<: *default
+  database: yoga_studio_development
+
+test:
+  <<: *default
+  database: yoga_studio_test
+
+production:
+  <<: *default
+  database: yoga_studio_production
+  username: <%= ENV['YOGA_STUDIO_DATABASE_USERNAME'] %>
+  password: <%= ENV['YOGA_STUDIO_DATABASE_PASSWORD'] %>
